@@ -2072,9 +2072,10 @@ class RealNVP(nn.Module):
         z, log_det = self.backward_p(x)
         return self.prior.log_prob(z) + log_det
 
+
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+
 
 # ── ResBlock ──────────────────────────────────────────────────────────────────
 class ResBlock(nn.Module):
@@ -2109,13 +2110,13 @@ class ResBlock(nn.Module):
 class GlobalAttention(nn.Module):
     """Global Attention Mechanism (GAM).
 
-    Combines channel attention (MLP on permuted tensor) and
-    spatial attention (two successive convolutions) to re-weight
+    Combines channel attention (MLP on permuted tensor) and spatial attention (two successive convolutions) to re-weight
     features along both axes.
 
-    Reference: 'Global Attention Mechanism: Retain Information to
-    Enhance Channel-Spatial Interactions' (Liu et al., 2021).
+    Reference: 'Global Attention Mechanism: Retain Information to Enhance Channel-Spatial Interactions' (Liu et al.,
+    2021).
     """
+
     def __init__(self, in_channels, reduction_ratio=4):
         super().__init__()
         reduced = max(1, in_channels // reduction_ratio)
@@ -2137,16 +2138,16 @@ class GlobalAttention(nn.Module):
         )
 
     def forward(self, x):
-        B, C, H, W = x.shape
+        _B, _C, _H, _W = x.shape
 
         # Channel attention — operate across spatial positions
         # Permute so that the channel dim is last for the Linear layers
-        x_perm = x.permute(0, 2, 3, 1)                  # (B, H, W, C)
+        x_perm = x.permute(0, 2, 3, 1)  # (B, H, W, C)
         ch_attn = torch.sigmoid(self.channel_mlp(x_perm))  # (B, H, W, C)
-        x = x * ch_attn.permute(0, 3, 1, 2)              # broadcast × original
+        x = x * ch_attn.permute(0, 3, 1, 2)  # broadcast × original
 
         # Spatial attention — preserve channel info via 7×7 convs
-        sp_attn = torch.sigmoid(self.spatial_conv(x))    # (B, C, H, W)
+        sp_attn = torch.sigmoid(self.spatial_conv(x))  # (B, C, H, W)
         x = x * sp_attn
 
         return x
