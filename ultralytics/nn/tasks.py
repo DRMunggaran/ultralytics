@@ -1629,10 +1629,11 @@ def parse_model(d, ch, verbose=True):
             A2C2f,
         }
     )
-    from ultralytics.nn.modules.block import ResBlock, GlobalAttention, ResBlockWithAttention
-    globals()['ResBlock'] = ResBlock
-    globals()['GlobalAttention'] = GlobalAttention
-    globals()['ResBlockWithAttention'] = ResBlockWithAttention
+    from ultralytics.nn.modules.block import GlobalAttention, ResBlock, ResBlockWithAttention
+
+    globals()["ResBlock"] = ResBlock
+    globals()["GlobalAttention"] = GlobalAttention
+    globals()["ResBlockWithAttention"] = ResBlockWithAttention
     for i, (f, n, m, args) in enumerate(d["backbone"] + d["head"]):  # from, number, module, args
         m = (
             getattr(torch.nn, m[3:])
@@ -1719,7 +1720,7 @@ def parse_model(d, ch, verbose=True):
             c1 = ch[f]
             args = [*args[1:]]
         else:
-            name = getattr(m, '__name__', '')
+            name = getattr(m, "__name__", "")
             if name in {"ResBlock", "GlobalAttention", "ResBlockWithAttention"}:
                 c1 = ch[f]
                 c2 = c1  # output = input channels, ignore args for channel tracking
