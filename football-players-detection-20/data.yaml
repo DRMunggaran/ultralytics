@@ -1,8 +1,8 @@
 names:
-- ball
-- goalkeeper
-- player
-- referee
+  - ball
+  - goalkeeper
+  - player
+  - referee
 nc: 4
 roboflow:
   license: CC BY 4.0
